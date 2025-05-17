@@ -1,0 +1,5 @@
+{
+	"dependencies": {
+		"@medusajs/dashboard": "2.8.2"
+	}
+}
