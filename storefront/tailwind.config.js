@@ -34,6 +34,11 @@ module.exports = {
           80: "#1F2937",
           90: "#111827",
         },
+        restaurant: {
+					gold: '#D4AF37',
+					black: '#1A1A1A',
+					red: '#8B0000'
+				}
       },
       borderRadius: {
         none: "0px",

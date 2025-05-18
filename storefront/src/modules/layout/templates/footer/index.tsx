@@ -1,153 +1,80 @@
-import { getCategoriesList } from "@lib/data/categories"
-import { getCollectionsList } from "@lib/data/collections"
-import { Text, clx } from "@medusajs/ui"
-
-import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import MedusaCTA from "@modules/layout/components/medusa-cta"
+import { Facebook, Instagram, Twitter, MapPin, Phone, Mail } from 'lucide-react';
+import Logo from '@modules/common/components/logo/index';
+import SocialIcon from '@modules/layout/components/socialIcon';
+import Separator from '@modules/layout/components/separator/index';
 
 export default async function Footer() {
-  const { collections } = await getCollectionsList(0, 6)
-  const { product_categories } = await getCategoriesList(0, 6)
+
+  const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-ui-border-base w-full">
-      <div className="content-container flex flex-col w-full">
-        <div className="flex flex-col gap-y-6 xsmall:flex-row items-start justify-between py-40">
-          <div>
-            <LocalizedClientLink
-              href="/"
-              className="txt-compact-xlarge-plus text-ui-fg-subtle hover:text-ui-fg-base uppercase"
-            >
-              Medusa Store
-            </LocalizedClientLink>
+    <footer className="w-full bg-restaurant-black text-white py-10">
+      <div className="container px-4 mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+          {/* Logo and Tagline */}
+          <div className="flex flex-col items-center md:items-start space-y-4">
+            <Logo />
+            <p className="text-sm italic max-w-xs text-gray-400 mt-4 text-center md:text-left">
+              "La excelencia culinaria no es un destino, sino un viaje continuo"
+            </p>
           </div>
-          <div className="text-small-regular gap-10 md:gap-x-16 grid grid-cols-2 sm:grid-cols-3">
-            {product_categories && product_categories?.length > 0 && (
-              <div className="flex flex-col gap-y-2">
-                <span className="txt-small-plus txt-ui-fg-base">
-                  Categories
-                </span>
-                <ul
-                  className="grid grid-cols-1 gap-2"
-                  data-testid="footer-categories"
-                >
-                  {product_categories?.slice(0, 6).map((c) => {
-                    if (c.parent_category) {
-                      return
-                    }
 
-                    const children =
-                      c.category_children?.map((child) => ({
-                        name: child.name,
-                        handle: child.handle,
-                        id: child.id,
-                      })) || null
+          {/* Contact Information */}
+          <div className="flex flex-col items-center md:items-start space-y-4">
+            <h3 className="font-playfair text-xl font-semibold tracking-wide text-restaurant-gold mb-2">
+              Contáctanos
+            </h3>
+            <div className="flex items-center space-x-2">
+              <MapPin size={16} className="text-restaurant-red" />
+              <span className="text-sm">Coronel</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Phone size={16} className="text-restaurant-red" />
+              <span className="text-sm">+569 30660016</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Mail size={16} className="text-restaurant-red" />
+              <span className="text-sm">shalomcgef.srl@gmail.com</span>
+            </div>
+          </div>
 
-                    return (
-                      <li
-                        className="flex flex-col gap-2 text-ui-fg-subtle txt-small"
-                        key={c.id}
-                      >
-                        <LocalizedClientLink
-                          className={clx(
-                            "hover:text-ui-fg-base",
-                            children && "txt-small-plus"
-                          )}
-                          href={`/categories/${c.handle}`}
-                          data-testid="category-link"
-                        >
-                          {c.name}
-                        </LocalizedClientLink>
-                        {children && (
-                          <ul className="grid grid-cols-1 ml-3 gap-2">
-                            {children &&
-                              children.map((child) => (
-                                <li key={child.id}>
-                                  <LocalizedClientLink
-                                    className="hover:text-ui-fg-base"
-                                    href={`/categories/${child.handle}`}
-                                    data-testid="category-link"
-                                  >
-                                    {child.name}
-                                  </LocalizedClientLink>
-                                </li>
-                              ))}
-                          </ul>
-                        )}
-                      </li>
-                    )
-                  })}
-                </ul>
-              </div>
-            )}
-            {collections && collections.length > 0 && (
-              <div className="flex flex-col gap-y-2">
-                <span className="txt-small-plus txt-ui-fg-base">
-                  Collections
-                </span>
-                <ul
-                  className={clx(
-                    "grid grid-cols-1 gap-2 text-ui-fg-subtle txt-small",
-                    {
-                      "grid-cols-2": (collections?.length || 0) > 3,
-                    }
-                  )}
-                >
-                  {collections?.slice(0, 6).map((c) => (
-                    <li key={c.id}>
-                      <LocalizedClientLink
-                        className="hover:text-ui-fg-base"
-                        href={`/collections/${c.handle}`}
-                      >
-                        {c.title}
-                      </LocalizedClientLink>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            <div className="flex flex-col gap-y-2">
-              <span className="txt-small-plus txt-ui-fg-base">Medusa</span>
-              <ul className="grid grid-cols-1 gap-y-2 text-ui-fg-subtle txt-small">
-                <li>
-                  <a
-                    href="https://github.com/medusajs"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="hover:text-ui-fg-base"
-                  >
-                    GitHub
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="https://docs.medusajs.com"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="hover:text-ui-fg-base"
-                  >
-                    Documentation
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="https://github.com/medusajs/nextjs-starter-medusa"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="hover:text-ui-fg-base"
-                  >
-                    Source code
-                  </a>
-                </li>
-              </ul>
+          {/* Hours */}
+          <div className="flex flex-col items-center md:items-start space-y-4">
+            <h3 className="font-playfair text-xl font-semibold tracking-wide text-restaurant-gold mb-2">
+              Horarios
+            </h3>
+            <div className="grid grid-cols-2 gap-1 w-full max-w-xs">
+              <span className="text-sm font-medium">Lunes - Viernes:</span>
+              <span className="text-sm text-gray-400">17:00 - 23:30</span>
+            </div>
+            <div className="pt-4">
+              <span className="text-xs text-restaurant-gold border border-restaurant-gold px-3 py-1 rounded-md">
+                Reservaciones recomendadas
+              </span>
             </div>
           </div>
         </div>
-        <div className="flex w-full mb-16 justify-between text-ui-fg-muted">
-          <Text className="txt-compact-small">
-            © {new Date().getFullYear()} Medusa Store. All rights reserved.
-          </Text>
-          <MedusaCTA />
+
+        {/* Decorative element */}
+        <div className="flex items-center justify-center my-8">
+          <Separator className="w-1/4 bg-restaurant-gold/30" />
+          <div className="mx-4">
+            <div className="w-3 h-3 bg-restaurant-red transform rotate-45"></div>
+          </div>
+          <Separator className="w-1/4 bg-restaurant-gold/30" />
+        </div>
+
+        {/* Bottom section */}
+        <div className="flex flex-col md:flex-row items-center justify-between pt-4">
+          <p className="text-xs text-gray-500 mb-4 md:mb-0">
+            &copy; {currentYear} Felipe Benitez Sura. Todos los derechos reservados.
+          </p>
+
+          <div className="flex space-x-3">
+            <SocialIcon href="https://facebook.com" icon={Facebook} />
+            <SocialIcon href="https://instagram.com" icon={Instagram} />
+            <SocialIcon href="https://twitter.com" icon={Twitter} />
+          </div>
         </div>
       </div>
     </footer>
