@@ -53,7 +53,7 @@ const ProfileBillingAddress: React.FC<MyInformationProps> = ({
 
   const currentInfo = useMemo(() => {
     if (!billingAddress) {
-      return "No billing address"
+      return "Sin direcciones de facturación."
     }
 
     const country =
@@ -82,7 +82,7 @@ const ProfileBillingAddress: React.FC<MyInformationProps> = ({
   return (
     <form action={formAction} onReset={() => clearState()} className="w-full">
       <AccountInfo
-        label="Billing address"
+        label="Dirección de facturación"
         currentInfo={currentInfo}
         isSuccess={successState}
         isError={!!state.error}
