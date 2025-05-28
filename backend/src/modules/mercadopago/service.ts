@@ -30,6 +30,7 @@ import { MedusaError } from "@medusajs/framework/utils";
 import {
     BigNumber
 } from "@medusajs/framework/utils"
+import type { PreferenceRequest } from "mercadopago/dist/clients/preference/commonTypes";
 
 type Options = {
     apiKey: string
@@ -66,9 +67,10 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
         description: string,
         externalReference?: string
     ): Promise<{ id: string; init_point: string }> {
-        const body: Record<string, any> = {
+        const body: PreferenceRequest = {
             items: [
                 {
+                    id: 'item_id',
                     title: description,
                     quantity: 1,
                     unit_price: amount,
@@ -376,10 +378,16 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
 
         // assuming you have a client that updates the payment
         const customer = context.customer;
+        const numericAmount =
+            typeof amount === "string"
+                ? parseFloat(amount)
+                : typeof amount === "number"
+                    ? amount
+                    : amount.toNumber();
         const response = await this.client.update(
             externalId,
             {
-                amount,
+                amount: numericAmount,
                 currency_code,
                 customer,
             }
