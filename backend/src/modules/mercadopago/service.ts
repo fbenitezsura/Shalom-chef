@@ -24,7 +24,9 @@ import {
     SavePaymentMethodInput,
     UpdateAccountHolderInput,
     UpdatePaymentInput,
-    UpdatePaymentOutput
+    UpdatePaymentOutput,
+    ProviderWebhookPayload,
+    WebhookActionResult
 } from "@medusajs/framework/types";
 import { MedusaError } from "@medusajs/framework/utils";
 import {
