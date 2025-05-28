@@ -259,11 +259,15 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
         input: InitiatePaymentInput
     ): Promise<InitiatePaymentOutput> {
         const { amount, context, data } = input;
-
-        const description = data?.description || `Pago por ${amount} ${input.currency_code}`;
+        const numericAmount = Number(amount);
+        const defaultDesc = `Pago por ${numericAmount} ${input.currency_code}`;
+        const description =
+            typeof data?.description === "string"
+                ? data.description
+                : defaultDesc;
 
         const { id: preferenceId, init_point } = await this.createPreference(
-            amount,
+            numericAmount,
             description,
             data?.order_id?.toString()
         );
