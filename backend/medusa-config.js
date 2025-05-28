@@ -46,6 +46,21 @@ const medusaConfig = {
   },
   modules: [
     {
+      resolve: "@medusajs/medusa/payment",
+      options: {
+        providers: [
+          {
+            // if module provider is in a plugin, use `plugin-name/providers/my-payment`
+            resolve: "./src/modules/mercadopago",
+            id: "mercadpago",
+            options: {
+              apiKey: "TEST-205830640754541-052718-d440cae6debd661e431323e97e9ea1ea-52095246"
+            }
+          }
+        ]
+      }
+    },
+    {
       key: Modules.FILE,
       resolve: '@medusajs/file',
       options: {
