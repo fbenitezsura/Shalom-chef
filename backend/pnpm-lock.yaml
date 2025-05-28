@@ -56,6 +56,9 @@ importers:
       medusajs-launch-utils:
         specifier: ^0.0.15
         version: 0.0.15
+      mercadopago:
+        specifier: ^2.7.0
+        version: 2.7.0
       minio:
         specifier: ^8.0.3
         version: 8.0.5
@@ -5733,6 +5736,9 @@ packages:
 
   meilisearch@0.48.2:
     resolution: {integrity: sha512-auDB6grs3f/+dVzzPiAOOFnrVN/L87/+SWZfy56TpimDinWjU4u6Jc2o6lgeLluotpbMOFY1WpTTbqtUdMduQw==}
+
+  mercadopago@2.7.0:
+    resolution: {integrity: sha512-B8r3Cr2tOV+zgAhNsr2fSGOSCSqO5b0tMzeHpZog9wR4ywjKcd/ef4PxsV/kr8cyqyuTeC8wTWS2G5/sPVEnSA==}
 
   merge-descriptors@1.0.3:
     resolution: {integrity: sha512-gaNvAS7TZ897/rVaZ0nMtAyxNyi/pdbjbAwUpFQpN70GqnVfOiXpeUUMKRBmzXaSQ8DdTX4/0ms62r2K+hE6mQ==}
@@ -14518,6 +14524,13 @@ snapshots:
       - pg-native
 
   meilisearch@0.48.2: {}
+
+  mercadopago@2.7.0:
+    dependencies:
+      node-fetch: 2.7.0
+      uuid: 9.0.1
+    transitivePeerDependencies:
+      - encoding
 
   merge-descriptors@1.0.3: {}
 
