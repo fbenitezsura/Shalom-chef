@@ -122,7 +122,7 @@ const medusaConfig = {
             resolve: path.resolve(__dirname, './src/modules/mercadopago'),
             id: 'mercadopago',
             options: {
-              apiKey: MERCADOPAGO_API_KEY,
+              apiKey: 'TEST-205830640754541-052718-d440cae6debd661e431323e97e9ea1ea-52095246',
               successUrl: `${BACKEND_URL}/store/checkout/success`,
               failureUrl: `${BACKEND_URL}/store/checkout/failure`,
               pendingUrl: `${BACKEND_URL}/store/checkout/pending`,
