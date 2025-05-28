@@ -89,8 +89,8 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
 
         const response = await this.preferenceClient.create({ body });
         return {
-            id: response.body.id,
-            init_point: response.body.init_point,
+            id: response.id,
+            init_point: response.init_point,
         };
     }
 
@@ -376,22 +376,13 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
             throw new Error("Context must include a valid customer.");
         }
 
-        // assuming you have a client that updates the payment
-        const customer = context.customer;
-        const numericAmount =
-            typeof amount === "string"
-                ? parseFloat(amount)
-                : typeof amount === "number"
-                    ? amount
-                    : amount.toNumber();
-        const response = await this.client.update(
-            externalId,
-            {
-                amount: numericAmount,
-                currency_code,
-                customer,
-            }
-        );
+        const numericAmount = Number(amount);
+
+        const response = await this.client.update(data.id!, {
+            amount: numericAmount,
+            currency_code,
+            customer: context.customer,
+        });
 
         return response;
     }
