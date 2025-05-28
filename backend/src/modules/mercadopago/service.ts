@@ -46,7 +46,7 @@ type InjectedDependencies = {
 }
 
 class MercadopagoService extends AbstractPaymentProvider<Options> {
-    static identifier = "mercadpago";
+    static identifier = "mercadopago";
 
     protected client;
     protected preferenceClient: Preference;

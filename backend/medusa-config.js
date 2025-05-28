@@ -46,21 +46,6 @@ const medusaConfig = {
   },
   modules: [
     {
-      resolve: "@medusajs/medusa/payment",
-      options: {
-        providers: [
-          {
-            // if module provider is in a plugin, use `plugin-name/providers/my-payment`
-            resolve: "./src/modules/mercadopago",
-            id: "mercadpago",
-            options: {
-              apiKey: "TEST-205830640754541-052718-d440cae6debd661e431323e97e9ea1ea-52095246"
-            }
-          }
-        ]
-      }
-    },
-    {
       key: Modules.FILE,
       resolve: '@medusajs/file',
       options: {
@@ -133,6 +118,16 @@ const medusaConfig = {
       options: {
         providers: [
           {
+            resolve: path.resolve(__dirname, './src/modules/mercadopago'),
+            id: 'mercadopago',
+            options: {
+              apiKey: MERCADOPAGO_API_KEY,
+              successUrl: `${BACKEND_URL}/store/checkout/success`,
+              failureUrl: `${BACKEND_URL}/store/checkout/failure`,
+              pendingUrl: `${BACKEND_URL}/store/checkout/pending`,
+            },
+          },
+          {
             resolve: '@medusajs/payment-stripe',
             id: 'stripe',
             options: {
@@ -146,7 +141,7 @@ const medusaConfig = {
     }] : [])
   ],
   plugins: [
-  ...(MEILISEARCH_HOST && MEILISEARCH_ADMIN_KEY ? [{
+    ...(MEILISEARCH_HOST && MEILISEARCH_ADMIN_KEY ? [{
       resolve: '@rokmohar/medusa-plugin-meilisearch',
       options: {
         config: {
