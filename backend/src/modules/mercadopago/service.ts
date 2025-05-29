@@ -1,4 +1,5 @@
 import { MercadoPagoConfig, Preference } from 'mercadopago';
+import { randomUUID } from 'crypto';
 import { AbstractPaymentProvider } from "@medusajs/framework/utils"
 import {
     Logger,
@@ -46,7 +47,7 @@ type InjectedDependencies = {
 }
 
 class MercadopagoService extends AbstractPaymentProvider<Options> {
-    static identifier = "mercadopago";
+    static identifier = "mercadpago";
 
     protected client;
     protected preferenceClient: Preference;
@@ -82,14 +83,17 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
                 success: this.options_.successUrl,
                 failure: this.options_.failureUrl,
                 pending: this.options_.pendingUrl,
-            },
-            auto_return: 'approved',
+            }
         };
         if (externalReference) {
             body.external_reference = externalReference;
         }
-
-        const response = await this.preferenceClient.create({ body });
+        const idempotencyKey = randomUUID();
+        const response = await this.preferenceClient.create({
+            body, requestOptions: {
+                idempotencyKey,
+            }
+        });
         return {
             id: response.id,
             init_point: response.init_point,
@@ -109,7 +113,7 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
         input: AuthorizePaymentInput
     ): Promise<AuthorizePaymentOutput> {
         const externalId = input.data?.id
-
+        console.log("externalId", externalId)
         // assuming you have a client that authorizes the payment
         const paymentData = await this.client.authorizePayment(externalId)
 
@@ -144,32 +148,6 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
         return { data: paymentData }
     }
 
-    async createAccountHolder({ context, data }: CreateAccountHolderInput) {
-        const { account_holder, customer } = context
-
-        if (account_holder?.data?.id) {
-            return { id: account_holder.data.id as string }
-        }
-
-        if (!customer) {
-            throw new MedusaError(
-                MedusaError.Types.INVALID_DATA,
-                "Missing customer data."
-            )
-        }
-
-        // assuming you have a client that creates the account holder
-        const providerAccountHolder = await this.client.createAccountHolder({
-            email: customer.email,
-            ...data
-        })
-
-        return {
-            id: providerAccountHolder.id,
-            data: providerAccountHolder as unknown as Record<string, unknown>
-        }
-    }
-
     async getPaymentStatus(
         input: GetPaymentStatusInput
     ): Promise<GetPaymentStatusOutput> {
@@ -190,16 +168,14 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
         }
     }
 
-    async deletePayment(
-        input: DeletePaymentInput
-    ): Promise<DeletePaymentOutput> {
-        const externalId = input.data?.id
-
-        // assuming you have a client that cancels the payment
-        await this.client.cancelPayment(externalId)
-        return {
-            data: input.data
+    async deletePayment(input: DeletePaymentInput): Promise<Record<string, unknown>> {
+        try {
+            await this.client.cancelPayment(input.data?.id)
+        } catch {
+            // ignoramos cualquier error de cancelación
         }
+        // devolver {} le indica al workflow que puede continuar
+        return {}
     }
 
     async getWebhookActionAndData(
@@ -258,7 +234,7 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
     async initiatePayment(
         input: InitiatePaymentInput
     ): Promise<InitiatePaymentOutput> {
-        const { amount, context, data } = input;
+        const { amount, data } = input;
         const numericAmount = Number(amount);
         const defaultDesc = `Pago por ${numericAmount} ${input.currency_code}`;
         const description =
@@ -274,7 +250,10 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
 
         return {
             id: preferenceId,
-            data: { init_point },
+            data: {
+                init_point,
+                preference_id: preferenceId
+            },
         };
     }
 
@@ -392,7 +371,6 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
 
         return response;
     }
-
 
 }
 
