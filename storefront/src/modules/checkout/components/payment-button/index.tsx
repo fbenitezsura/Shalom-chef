@@ -9,7 +9,8 @@ import ErrorMessage from "../error-message"
 import Spinner from "@modules/common/icons/spinner"
 import { placeOrder } from "@lib/data/cart"
 import { HttpTypes } from "@medusajs/types"
-import { isManual, isPaypal, isStripe } from "@lib/constants"
+import { isManual, isPaypal, isStripe, isMercadoPago } from "@lib/constants"
+import { MercadoPagoButton } from "./paymentMercadoPago"
 
 type PaymentButtonProps = {
   cart: HttpTypes.StoreCart
@@ -20,6 +21,7 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
   cart,
   "data-testid": dataTestId,
 }) => {
+
   const notReady =
     !cart ||
     !cart.shipping_address ||
@@ -49,6 +51,13 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
     case isManual(paymentSession?.provider_id):
       return (
         <ManualTestPaymentButton notReady={notReady} data-testid={dataTestId} />
+      )
+    case isMercadoPago(paymentSession?.provider_id):
+      return (
+        <MercadoPagoButton
+          cart={cart}
+          data-testid={dataTestId}
+        />
       )
     case isPaypal(paymentSession?.provider_id):
       return (

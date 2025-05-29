@@ -30,7 +30,14 @@ export const paymentInfoMap: Record<
     title: "Transferencia",
     icon: <CreditCard />,
   },
-  // Add more payment providers here
+  system_default: {
+    title: "Transferencia",
+    icon: <CreditCard />,
+  },
+  pp_mercadpago_mercadpago: {
+    title: "Mercado Pago",
+    icon: <CreditCard />,
+  }
 }
 
 // This only checks if it is native stripe for card payments, it ignores the other stripe-based providers
@@ -42,6 +49,9 @@ export const isPaypal = (providerId?: string) => {
 }
 export const isManual = (providerId?: string) => {
   return providerId?.startsWith("pp_system_default")
+}
+export const isMercadoPago = (providerId?: string) => {
+  return providerId?.startsWith("pp_mercadpago")
 }
 
 // Add currencies that don't need to be divided by 100
