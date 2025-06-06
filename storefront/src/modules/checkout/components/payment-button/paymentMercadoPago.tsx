@@ -1,35 +1,42 @@
-"use client";
+"use client"
 
-import React, { useEffect } from "react";
-import { initMercadoPago, Wallet } from "@mercadopago/sdk-react";
-import type { HttpTypes } from "@medusajs/types";
+import { Button } from "@medusajs/ui"
+import { useRouter } from "next/navigation"
+import type { HttpTypes } from "@medusajs/types"
 
-type MercadoPagoCheckoutProps = {
-  cart: HttpTypes.StoreCart;
-};
+type Props = {
+  cart: HttpTypes.StoreCart
+  "data-testid"?: string
+}
 
-export const MercadoPagoButton: React.FC<MercadoPagoCheckoutProps> = ({ cart }) => {
-  // 1) Inicializar SDK con tu Public Key (sandbox o prod)
-  useEffect(() => {
-    initMercadoPago(process.env.NEXT_PUBLIC_MERCADOPAGO_KEY, {
-      locale: "es-CL",
-    });
-  }, []);
+/**
+ * Renderiza un único botón que envía al usuario al `init_point`
+ * provisto por Mercado Pago (session.data.init_point).
+ */
+export const MercadoPagoButton: React.FC<Props> = ({
+  cart,
+  "data-testid": dataTestId,
+}) => {
+  const router = useRouter()
 
-  console.log("cart", cart);
+  // Medusa pone el init_point dentro del objeto data de la sesión
   const session = cart.payment_collection?.payment_sessions?.find(
     (s) => s.status === "pending"
-  );
-  if (!session) {
-    return null; // o un fallback
+  )
+  const initPoint = session?.data?.init_point as string | undefined
+
+  if (!initPoint) return null // aún no hay preferencia generada
+
+  const redirectToMP = () => {
+    // Si prefieres en la misma pestaña:
+    window.location.href = initPoint
+    // o en una nueva:
+    // window.open(initPoint, "_blank")
   }
-  console.log("session", session);
-  // 3) Usa el preferenceId de la sesión para renderizar el Wallet
+
   return (
-    <Wallet
-      initialization={{ preferenceId: session?.data?.preference_id  }}
-      onError={(err) => console.error("MP Error:", err)}
-      onReady={() => console.log("MP Checkout listo")}
-    />
-  );
-};
+    <Button onClick={redirectToMP} data-testid={dataTestId}>
+      Pagar con Mercado Pago
+    </Button>
+  )
+}
