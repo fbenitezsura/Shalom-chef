@@ -37,9 +37,11 @@ import type { PreferenceRequest } from "mercadopago/dist/clients/preference/comm
 
 type Options = {
     apiKey: string
+    webhookApiKey: string;
     successUrl: string;
     failureUrl: string;
     pendingUrl: string;
+    webhookUrl: string;
 }
 
 type InjectedDependencies = {
@@ -83,7 +85,8 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
                 success: this.options_.successUrl,
                 failure: this.options_.failureUrl,
                 pending: this.options_.pendingUrl,
-            }
+            },
+            notification_url: this.options_.webhookUrl,
         };
         if (externalReference) {
             body.external_reference = externalReference;

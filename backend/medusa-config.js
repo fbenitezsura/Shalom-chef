@@ -141,7 +141,9 @@ const medusaConfig = {
             resolve: path.resolve(__dirname, './src/modules/mercadopago'),
             id: 'mercadpago',
             options: {
-              apiKey: 'APP_USR-4859914527930682-052901-015ce682e93a441b40a303318e49a8f3-2463101601',
+              apiKey: 'APP_USR-7376383145276933-060600-60a7ab6d0ffdef28f9fc7548ae27ec10-2463322099',
+              webhookApiKey: '5f270e07c5b19279e06254fcda5c9943d7d97ed853a8a9efe78671931ad99b1d',
+              webhookUrl: `${BACKEND_URL}/hooks/payment/mercadpago_mercadpago`,
               successUrl: `${STORE_URL}/order/confirmed`,
               failureUrl: `${STORE_URL}/order/confirmed`,
               pendingUrl: `${STORE_URL}/order/confirmed`,
