@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react"
 import { PencilSquare as Edit, Trash } from "@medusajs/icons"
 import { Button, Heading, Text, clx } from "@medusajs/ui"
-
+import ComunaSelect from '@modules/checkout/components/comuna-select'
 import useToggleState from "@lib/hooks/use-toggle-state"
 import CountrySelect from "@modules/checkout/components/country-select"
 import Input from "@modules/common/components/input"
@@ -187,12 +187,14 @@ const EditAddress: React.FC<EditAddressProps> = ({
                   data-testid="city-input"
                 />
               </div>
-              <Input
-                label="Province / State"
-                name="province"
+              <ComunaSelect
+                label="Comuna"
+                name="province"                   // ➜ se enviará al backend como “province”
+                placeholder="Selecciona tu comuna"
+                // defaultValue="coronel-centro"   // ← descomenta si quieres una por defecto
+                required
                 autoComplete="address-level1"
-                defaultValue={address.province || undefined}
-                data-testid="state-input"
+                data-testid="commune-select"
               />
               <CountrySelect
                 name="country_code"

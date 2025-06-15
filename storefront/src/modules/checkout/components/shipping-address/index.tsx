@@ -6,6 +6,7 @@ import { mapKeys } from "lodash"
 import React, { useEffect, useMemo, useState } from "react"
 import AddressSelect from "../address-select"
 import CountrySelect from "../country-select"
+import ComunaSelect from '@modules/checkout/components/comuna-select'
 
 const ShippingAddress = ({
   customer,
@@ -162,14 +163,14 @@ const ShippingAddress = ({
           required
           data-testid="shipping-country-select"
         />
-        <Input
+        <ComunaSelect
           label="Comuna"
           name="shipping_address.province"
           autoComplete="address-level1"
-          value={'Coronel'}
+          value={formData["shipping_address.province"] ?? ""}
           onChange={handleChange}
           required
-          data-testid="shipping-province-input"
+          data-testid="shipping-province-select"
         />
       </div>
       <div className="my-8">

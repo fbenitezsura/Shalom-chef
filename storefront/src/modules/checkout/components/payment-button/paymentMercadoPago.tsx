@@ -3,6 +3,7 @@
 import { Button } from "@medusajs/ui"
 import { useRouter } from "next/navigation"
 import type { HttpTypes } from "@medusajs/types"
+import { placeOrder } from "@lib/data/cart";
 
 type Props = {
   cart: HttpTypes.StoreCart
@@ -25,13 +26,14 @@ export const MercadoPagoButton: React.FC<Props> = ({
   )
   const initPoint = session?.data?.init_point as string | undefined
 
-  if (!initPoint) return null // aún no hay preferencia generada
+  if (!initPoint) return null
 
-  const redirectToMP = () => {
-    // Si prefieres en la misma pestaña:
-    window.location.href = initPoint
-    // o en una nueva:
-    // window.open(initPoint, "_blank")
+  const redirectToMP = async () => {
+    console.log("lanzando orden")
+    await placeOrder().finally(() => {
+      window.location.href = initPoint
+    })
+
   }
 
   return (

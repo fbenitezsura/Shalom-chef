@@ -219,13 +219,25 @@ export async function initiatePaymentSession(
     context?: Record<string, unknown>
   }
 ) {
-  return sdk.store.payment
+  const cartId = typeof cart === "string" ? cart : cart.id;
+  /* 1) intenta crear/actualizar la sesión --------------------------- */
+  const response = await sdk.store.payment
     .initiatePaymentSession(cart, data, {}, getAuthHeaders())
-    .then((resp) => {
-      revalidateTag("cart")
-      return resp
-    })
     .catch(medusaError)
+  /* 2) recupera el carrito ya refrescado ---------------------------- */
+  const { cart: refreshed } = await sdk.store.cart.retrieve(
+    cartId,
+    {},
+    getAuthHeaders()
+  )
+  revalidateTag("cart")
+
+  /* 3) busca la sesión de pago que acabamos de crear ---------------- */
+  const ps = refreshed.payment_sessions?.find(
+    (s) => s.provider_id === data.provider_id
+  )
+
+  return { cart: refreshed, data: ps?.data }  // data.init_point listo
 }
 
 export async function applyPromotions(codes: string[]) {

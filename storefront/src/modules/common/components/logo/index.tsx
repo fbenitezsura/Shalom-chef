@@ -11,7 +11,7 @@ const Logo: React.FC<LogoProps> = ({ className }) => {
     <div className={cn("relative", className)}>
       <h1 className="font-playfair text-4xl font-bold tracking-tighter text-restaurant-gold">
         <span className="relative">
-          SC
+          Shalom Chef
           <span className="absolute -top-1 -right-2 text-xs text-restaurant-red">®</span>
         </span>
       </h1>

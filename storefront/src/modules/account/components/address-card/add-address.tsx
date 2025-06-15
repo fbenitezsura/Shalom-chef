@@ -7,6 +7,7 @@ import { useFormState } from "react-dom"
 
 import useToggleState from "@lib/hooks/use-toggle-state"
 import CountrySelect from "@modules/checkout/components/country-select"
+import ComunaSelect from '@modules/checkout/components/comuna-select'
 import Input from "@modules/common/components/input"
 import Modal from "@modules/common/components/modal"
 import { SubmitButton } from "@modules/checkout/components/submit-button"
@@ -109,12 +110,14 @@ const AddAddress = ({ region }: { region: HttpTypes.StoreRegion }) => {
                   data-testid="city-input"
                 />
               </div>
-              <Input
+              <ComunaSelect
                 label="Comuna"
-                name="province"
-                value="Coronel"
+                name="province"                   // ➜ se enviará al backend como “province”
+                placeholder="Selecciona tu comuna"
+                // defaultValue="coronel-centro"   // ← descomenta si quieres una por defecto
+                required
                 autoComplete="address-level1"
-                data-testid="state-input"
+                data-testid="commune-select"
               />
               <CountrySelect
                 region={region}

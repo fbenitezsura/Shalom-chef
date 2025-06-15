@@ -8,7 +8,7 @@ import Divider from "@modules/common/components/divider"
 import Radio from "@modules/common/components/radio"
 import ErrorMessage from "@modules/checkout/components/error-message"
 import { useRouter, useSearchParams, usePathname } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import { setShippingMethod } from "@lib/data/cart"
 import { convertToLocale } from "@lib/util/money"
 import { HttpTypes } from "@medusajs/types"
@@ -31,8 +31,27 @@ const Shipping: React.FC<ShippingProps> = ({
 
   const isOpen = searchParams.get("step") === "delivery"
 
-  const selectedShippingMethod = availableShippingMethods?.find(
-    // To do: remove the previously selected shipping method instead of using the last one
+  /* ------------------------------------------------------------------
+   * Filtrado de métodos de envío según la comuna seleccionada
+   * Siempre se muestra cualquier opción que contenga “retiro”
+   * ------------------------------------------------------------------ */
+  const province = cart?.shipping_address?.province?.toLowerCase() ?? ""
+
+  const filteredMethods = useMemo(() => {
+    console.log("availableShippingMethods",availableShippingMethods)
+    if (!availableShippingMethods) return []
+
+    return availableShippingMethods.filter((opt) => {
+      const name = opt.name.toLowerCase()
+      if (name.includes("retiro")) return true      // Retiro en local
+      if (!province) return true                   // Aún sin comuna
+      return name.includes(province)               // Coincide con comuna
+    })
+  }, [availableShippingMethods, province])
+
+  /* ------------------------------------------------------------------ */
+
+  const selectedShippingMethod = filteredMethods.find(
     (method) => method.id === cart.shipping_methods?.at(-1)?.shipping_option_id
   )
 
@@ -58,6 +77,8 @@ const Shipping: React.FC<ShippingProps> = ({
   useEffect(() => {
     setError(null)
   }, [isOpen])
+
+  console.log("cart", cart)
 
   return (
     <div className="bg-white">
@@ -96,7 +117,7 @@ const Shipping: React.FC<ShippingProps> = ({
         <div data-testid="delivery-options-container">
           <div className="pb-8">
             <RadioGroup value={selectedShippingMethod?.id} onChange={set}>
-              {availableShippingMethods?.map((option) => {
+              {filteredMethods.map((option) => {
                 return (
                   <RadioGroup.Option
                     key={option.id}

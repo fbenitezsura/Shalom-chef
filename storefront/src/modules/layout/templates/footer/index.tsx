@@ -34,7 +34,7 @@ export default async function Footer() {
             </div>
             <div className="flex items-center space-x-2">
               <Mail size={16} className="text-restaurant-red" />
-              <span className="text-sm">shalomcgef.srl@gmail.com</span>
+              <span className="text-sm">shalomchef.srl@gmail.com</span>
             </div>
           </div>
 
@@ -67,13 +67,12 @@ export default async function Footer() {
         {/* Bottom section */}
         <div className="flex flex-col md:flex-row items-center justify-between pt-4">
           <p className="text-xs text-gray-500 mb-4 md:mb-0">
-            &copy; {currentYear} Felipe Benitez Sura. Todos los derechos reservados.
+            &copy; {currentYear}. Todos los derechos reservados.
           </p>
 
           <div className="flex space-x-3">
-            <SocialIcon href="https://facebook.com" icon={Facebook} />
-            <SocialIcon href="https://instagram.com" icon={Instagram} />
-            <SocialIcon href="https://twitter.com" icon={Twitter} />
+            <SocialIcon href="https://facebook.com/profile.php?id=61574469481798" icon={Facebook} />
+            <SocialIcon href="https://instagram.com/shalom.chef_oficial" icon={Instagram} />
           </div>
         </div>
       </div>

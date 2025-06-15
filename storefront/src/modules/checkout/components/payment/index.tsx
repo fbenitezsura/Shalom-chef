@@ -92,9 +92,20 @@ const Payment = ({
       if (!activeSession) {
         if (isMercadoPago(selectedPaymentMethod)) {
           // initiatePaymentSession devuelve { id, data: { init_point } }
-          await initiatePaymentSession(cart, {
+          const response = await initiatePaymentSession(cart, {
             provider_id: selectedPaymentMethod,
           })
+
+          const initPoint =
+            response?.cart?.payment_collection?.payment_sessions?.[0]?.data?.init_point;
+
+          if (initPoint) {
+            router.push(
+              `${pathname}?${createQueryString("step", "review")}`,
+              { scroll: false }
+            )
+            return
+          }
 
           return
         }
