@@ -23,12 +23,12 @@ export const metadata: Metadata = {
 }
 
 type Props = {
-  /** /order/confirmed?external_reference=<cart_id>&… */
-  searchParams: { external_reference?: string }
+  /** /order/confirmed?preference_id=<cart_id>&… */
+  searchParams: { preference_id?: string }
 }
 
 export default async function OrderConfirmedPage({ searchParams }: Props) {
-  const orderId = searchParams.external_reference;
+  const orderId = searchParams.preference_id;
   console.log("orderId", orderId)
 
   const order = await getOrder(orderId)
