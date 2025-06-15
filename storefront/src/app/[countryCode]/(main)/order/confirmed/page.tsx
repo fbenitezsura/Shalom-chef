@@ -20,7 +20,7 @@ import type { HttpTypes } from "@medusajs/types"
  */
 async function getPaymentByPreference(preferenceId: string) {
   const mp = new MercadoPagoConfig({
-    accessToken: 'APP_USR-321cfb8d-9e6d-467a-92cf-1d9a3fc96ba0', // token privado en ENV
+    accessToken: 'APP_USR-7376383145276933-060600-60a7ab6d0ffdef28f9fc7548ae27ec10-2463322099', // token privado en ENV
   })
   const paymentClient = new Payment(mp)
 
