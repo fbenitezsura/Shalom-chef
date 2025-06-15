@@ -113,6 +113,8 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
         input: AuthorizePaymentInput
     ): Promise<AuthorizePaymentOutput> {
 
+        console.log("autorizando el pago", input);
+
         const externalId =
             (input.data?.preference_id as string | undefined) ??   // lo que sí te llega
             (input.data?.id as string | undefined)                 // por si lo añades luego
@@ -133,6 +135,7 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
     async capturePayment(
         input: CapturePaymentInput
     ): Promise<CapturePaymentOutput> {
+        console.log("capturando el webhook", input)
         const externalId = input.data?.id
 
         // assuming you have a client that captures the payment
@@ -241,6 +244,9 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
     async initiatePayment(
         input: InitiatePaymentInput
     ): Promise<InitiatePaymentOutput> {
+
+        console.log("se llamo el inicializador")
+
         const { amount, currency_code, data } = input
 
         const sessionId = (data?.session_id as string) ?? ""
