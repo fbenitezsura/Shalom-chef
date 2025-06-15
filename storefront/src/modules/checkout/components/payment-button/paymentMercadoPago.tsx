@@ -2,8 +2,7 @@
 
 import { Button } from "@medusajs/ui"
 import { useRouter } from "next/navigation"
-import type { HttpTypes } from "@medusajs/types"
-import { placeOrder } from "@lib/data/cart";
+import type { HttpTypes } from "@medusajs/types";
 
 type Props = {
   cart: HttpTypes.StoreCart
@@ -29,11 +28,7 @@ export const MercadoPagoButton: React.FC<Props> = ({
   if (!initPoint) return null
 
   const redirectToMP = async () => {
-    console.log("lanzando orden")
-    await placeOrder().finally(() => {
-      window.location.href = initPoint
-    })
-
+    window.location.href = initPoint;
   }
 
   return (

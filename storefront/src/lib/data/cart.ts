@@ -370,6 +370,8 @@ export async function placeOrder() {
   const cartRes = await sdk.store.cart
     .complete(cartId, {}, getAuthHeaders())
     .then((cartRes) => {
+      console.log("carrito completado", cartRes);
+      //crear url de pago aca con cartRes.order.id listo
       revalidateTag("cart")
       return cartRes
     })
