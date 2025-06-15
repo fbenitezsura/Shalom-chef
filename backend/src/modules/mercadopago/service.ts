@@ -70,12 +70,12 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
     protected async createPreference(
         amount: number,
         description: string,
-        externalReference?: string
+        sessionId: string
     ): Promise<{ id: string; init_point: string }> {
         const body: PreferenceRequest = {
             items: [
                 {
-                    id: 'item_id',
+                    id: "item_id",
                     title: description,
                     quantity: 1,
                     unit_price: amount,
@@ -87,20 +87,17 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
                 pending: this.options_.pendingUrl,
             },
             notification_url: this.options_.webhookUrl,
-        };
-        if (externalReference) {
-            body.external_reference = externalReference;
+            /* la referencia mínima que necesitamos */
+            external_reference: sessionId,
+            metadata: { session_id: sessionId },
         }
-        const idempotencyKey = randomUUID();
+
         const response = await this.preferenceClient.create({
-            body, requestOptions: {
-                idempotencyKey,
-            }
-        });
-        return {
-            id: response.id,
-            init_point: response.init_point,
-        };
+            body,
+            requestOptions: { idempotencyKey: randomUUID() },
+        })
+
+        return { id: response.id, init_point: response.init_point }
     }
 
     static validateOptions(options: Record<any, any>) {
@@ -115,14 +112,21 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
     async authorizePayment(
         input: AuthorizePaymentInput
     ): Promise<AuthorizePaymentOutput> {
-        const externalId = input.data?.id
-        console.log("externalId", externalId)
-        // assuming you have a client that authorizes the payment
-        const paymentData = await this.client.authorizePayment(externalId)
+
+        const externalId =
+            (input.data?.preference_id as string | undefined) ??   // lo que sí te llega
+            (input.data?.id as string | undefined)                 // por si lo añades luego
+
+        if (!externalId) {
+            throw new MedusaError(
+                MedusaError.Types.INVALID_DATA,
+                "Falta preference_id en data; revisa initiatePayment"
+            )
+        }
 
         return {
-            data: paymentData,
-            status: "authorized"
+            data: { preference_id: externalId },
+            status: "authorized",
         }
     }
 
@@ -237,27 +241,32 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
     async initiatePayment(
         input: InitiatePaymentInput
     ): Promise<InitiatePaymentOutput> {
-        const { amount, data } = input;
-        const numericAmount = Number(amount);
-        const defaultDesc = `Pago por ${numericAmount} ${input.currency_code}`;
+        const { amount, currency_code, data } = input
+
+        const sessionId = (data?.session_id as string) ?? ""
+        if (!sessionId) {
+            throw new MedusaError(
+                MedusaError.Types.INVALID_DATA,
+                "`session_id` es obligatorio para Mercado Pago"
+            )
+        }
+
+        const numericAmount = Number(amount)
         const description =
             typeof data?.description === "string"
                 ? data.description
-                : defaultDesc;
+                : `Pago por ${numericAmount} ${currency_code}`
 
         const { id: preferenceId, init_point } = await this.createPreference(
             numericAmount,
             description,
-            data?.order_id?.toString()
-        );
+            sessionId
+        )
 
         return {
             id: preferenceId,
-            data: {
-                init_point,
-                preference_id: preferenceId
-            },
-        };
+            data: { init_point, preference_id: preferenceId },
+        }
     }
 
     async listPaymentMethods({ context }: ListPaymentMethodsInput) {
