@@ -360,15 +360,17 @@ export async function placeOrder(type?: string) {
     .complete(cartId, {}, getAuthHeaders())
     .then( async (cartRes) => {
       console.log("cartRes", cartRes)
-      console.log("cartRest", cartRes.order.payment_collections)
+      console.log("cartRest", cartRes.order.payment_collections);
+      console.log("usando este type", type);
       if (type === 'mercadopago') {
+        console.log("iniciando pago en mp")
         const { init_point } = await createMpPreference({
           sessionId: cartRes.order.payment_collections[0].id,
           orderId: cartRes.order.id,
           amount:  cartRes.order.total,
           description: `Orden #${cartRes.order.id}`,
         })
-
+        console.log("response", init_point)
         // 3) Redirigir a Mercado Pago
         redirect(init_point)
       }

@@ -10,9 +10,10 @@ export async function createMpPreference(input: {
   const res = await fetch("http://backend-production-d28a.up.railway.app/mercadopago/payment", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(input),
-    cache: "no-store",
+    body: JSON.stringify(input)
   })
+
+  console.log("res", res);
 
   if (!res.ok) throw new Error(await res.text())
 
