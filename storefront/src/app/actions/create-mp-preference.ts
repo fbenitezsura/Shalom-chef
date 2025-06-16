@@ -7,7 +7,7 @@ export async function createMpPreference(input: {
   amount: number
   description: string
 }) {
-  const res = await fetch("http://backend-production-d28a.up.railway.app/mercadopago/payment", {
+  const res = await fetch("https://backend-production-d28a.up.railway.app/mercadopago/payment", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(input)
