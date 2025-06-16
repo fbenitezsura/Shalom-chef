@@ -359,7 +359,7 @@ export async function placeOrder() {
     .complete(cartId, {}, getAuthHeaders())
     .then((cartRes) => {
       console.log("cartRes", cartRes)
-      console.log("cartRest", cartRes.payment_collections)
+      console.log("cartRest", cartRes.order.payment_collections)
       revalidateTag("cart")
       return cartRes
     })
