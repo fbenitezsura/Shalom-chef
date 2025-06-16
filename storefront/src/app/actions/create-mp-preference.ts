@@ -11,7 +11,6 @@ export async function createMpPreference(input: {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(input),
-    // evita guardar en cache
     cache: "no-store",
   })
 
