@@ -20,7 +20,7 @@ export async function POST(
             description,
             sessionId,
             orderId,
-        } = (await req.json()) as {
+        } = req.body as {
             amount: number
             description: string
             sessionId: string
