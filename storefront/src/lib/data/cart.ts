@@ -370,9 +370,8 @@ export async function placeOrder(type?: string) {
           amount:  cartRes.order.total,
           description: `Orden #${cartRes.order.id}`,
         })
-        console.log("response", init_point)
-        // 3) Redirigir a Mercado Pago
-        redirect(init_point)
+        revalidateTag("cart")
+        return { ok: true, redirectUrl: init_point }
       }
       revalidateTag("cart")
       return cartRes

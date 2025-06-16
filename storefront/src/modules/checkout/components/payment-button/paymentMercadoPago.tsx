@@ -21,12 +21,14 @@ export const MercadoPagoButton: React.FC<Props> = ({
     (s) => s.status === "pending",
   )
 
-  console.log("session", session);
-
   if (!session?.amount) return null
 
   const redirectToMP = async () => {
-    await placeOrder('mercadopago');
+    const res = await placeOrder("mercadopago")
+
+    if (res?.init_point) {
+      window.location.href = res.init_point;
+    }
   }
 
   return (
