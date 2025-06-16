@@ -358,7 +358,7 @@ export async function placeOrder(type?: string) {
 
   const cartRes = await sdk.store.cart
     .complete(cartId, {}, getAuthHeaders())
-    .then((cartRes) => {
+    .then( async (cartRes) => {
       console.log("cartRes", cartRes)
       console.log("cartRest", cartRes.order.payment_collections)
       if (type === 'mercadopago') {
