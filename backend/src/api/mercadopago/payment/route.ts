@@ -20,11 +20,6 @@ export async function POST(
             description,
             sessionId,
             orderId
-        }: {
-            amount: number
-            description: string
-            sessionId: string
-            orderId: string
         } = req.body
 
         if (!amount || !description || !sessionId) {
