@@ -19,8 +19,13 @@ export async function POST(
             amount,
             description,
             sessionId,
-            orderId
-        } = req.body
+            orderId,
+        } = (await req.json()) as {
+            amount: number
+            description: string
+            sessionId: string
+            orderId: string
+        }
 
         if (!amount || !description || !sessionId) {
             res
