@@ -116,13 +116,13 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
         console.log("autorizando el pago", input);
 
         const externalId =
-            (input.data?.preference_id as string | undefined) ??   // lo que sí te llega
-            (input.data?.id as string | undefined)                 // por si lo añades luego
+            (input.data?.sessionId as string | undefined) ??
+            (input.data?.sessionId as string | undefined)
 
         if (!externalId) {
             throw new MedusaError(
                 MedusaError.Types.INVALID_DATA,
-                "Falta preference_id en data; revisa initiatePayment"
+                "Falta sessionId en data; revisa initiatePayment"
             )
         }
 
@@ -244,9 +244,7 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
     async initiatePayment(
         input: InitiatePaymentInput
     ): Promise<InitiatePaymentOutput> {
-
-        console.log("se llamo el inicializador")
-
+        console.log("entrada", input);
         const { amount, currency_code, data } = input
 
         const sessionId = (data?.session_id as string) ?? ""
@@ -263,15 +261,9 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
                 ? data.description
                 : `Pago por ${numericAmount} ${currency_code}`
 
-        const { id: preferenceId, init_point } = await this.createPreference(
-            numericAmount,
-            description,
-            sessionId
-        )
-
         return {
-            id: preferenceId,
-            data: { init_point, preference_id: preferenceId },
+            id: randomUUID(),
+            data: { amount: numericAmount, description, sessionId },
         }
     }
 
