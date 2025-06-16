@@ -96,10 +96,7 @@ const Payment = ({
             provider_id: selectedPaymentMethod,
           })
 
-          const initPoint =
-            response?.cart?.payment_collection?.payment_sessions?.[0]?.data?.init_point;
-
-          if (initPoint) {
+          if (response.payment_collection.amount) {
             router.push(
               `${pathname}?${createQueryString("step", "review")}`,
               { scroll: false }

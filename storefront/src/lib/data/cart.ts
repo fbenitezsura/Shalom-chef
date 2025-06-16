@@ -219,25 +219,13 @@ export async function initiatePaymentSession(
     context?: Record<string, unknown>
   }
 ) {
-  const cartId = typeof cart === "string" ? cart : cart.id;
-  /* 1) intenta crear/actualizar la sesión --------------------------- */
-  const response = await sdk.store.payment
+  return sdk.store.payment
     .initiatePaymentSession(cart, data, {}, getAuthHeaders())
+    .then((resp) => {
+      revalidateTag("cart")
+      return resp
+    })
     .catch(medusaError)
-  /* 2) recupera el carrito ya refrescado ---------------------------- */
-  const { cart: refreshed } = await sdk.store.cart.retrieve(
-    cartId,
-    {},
-    getAuthHeaders()
-  )
-  revalidateTag("cart")
-
-  /* 3) busca la sesión de pago que acabamos de crear ---------------- */
-  const ps = refreshed.payment_sessions?.find(
-    (s) => s.provider_id === data.provider_id
-  )
-
-  return { cart: refreshed, data: ps?.data }  // data.init_point listo
 }
 
 export async function applyPromotions(codes: string[]) {
@@ -370,21 +358,13 @@ export async function placeOrder() {
   const cartRes = await sdk.store.cart
     .complete(cartId, {}, getAuthHeaders())
     .then((cartRes) => {
-      console.log("carrito completado", cartRes);
-      //crear url de pago aca con cartRes.order.id listo
+      console.log("cartRes", cartRes)
       revalidateTag("cart")
       return cartRes
     })
-    .catch(medusaError)
+    .catch(medusaError);
 
-  if (cartRes?.type === "order") {
-    const countryCode =
-      cartRes.order.shipping_address?.country_code?.toLowerCase()
-    removeCartId()
-    redirect(`/${countryCode}/order/confirmed/${cartRes?.order.id}`)
-  }
-
-  return cartRes.cart
+  return cartRes
 }
 
 /**
