@@ -26,6 +26,8 @@ export const MercadoPagoButton: React.FC<Props> = ({
   const redirectToMP = async () => {
     const res = await placeOrder("mercadopago")
 
+    console.log("esta es la respuesta del boton", res);
+
     if (res?.init_point) {
       window.location.href = res.init_point;
     }
