@@ -1,4 +1,3 @@
-// src/api/mp-preferences.ts
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework"
 import { randomUUID } from "crypto"
 import { MercadoPagoConfig, Preference } from "mercadopago"
@@ -20,13 +19,13 @@ export async function POST(
             amount,
             description,
             sessionId,
-            orderId,
-        } = (await req.json()) as {
+            orderId
+        }: {
             amount: number
             description: string
             sessionId: string
             orderId: string
-        }
+        } = req.body
 
         if (!amount || !description || !sessionId) {
             res
