@@ -9,6 +9,7 @@ import { redirect } from "next/navigation"
 import { getAuthHeaders, getCartId, removeCartId, setCartId } from "./cookies"
 import { getProductsById } from "./products"
 import { getRegion } from "./regions"
+import { createMpPreference } from "./../../app/actions/create-mp-preference";
 
 export async function retrieveCart() {
   const cartId = getCartId()
@@ -349,7 +350,7 @@ export async function setAddresses(currentState: unknown, formData: FormData) {
   )
 }
 
-export async function placeOrder() {
+export async function placeOrder(type?: string) {
   const cartId = getCartId()
   if (!cartId) {
     throw new Error("No existing cart found when placing an order")
@@ -360,6 +361,17 @@ export async function placeOrder() {
     .then((cartRes) => {
       console.log("cartRes", cartRes)
       console.log("cartRest", cartRes.order.payment_collections)
+      if (type === 'mercadopago') {
+        const { init_point } = await createMpPreference({
+          sessionId: cartRes.order.payment_collections[0].id,
+          orderId: cartRes.order.id,
+          amount:  cartRes.order.total,
+          description: `Orden #${cartRes.order.id}`,
+        })
+
+        // 3) Redirigir a Mercado Pago
+        redirect(init_point)
+      }
       revalidateTag("cart")
       return cartRes
     })
