@@ -62,7 +62,6 @@ export async function POST(
 
         res.status(200).json({ id, init_point })
     } catch (err) {
-        req.scope.logger.error(err)
         res.status(500).json({ message: "Unable to create MP preference" })
     }
 }
