@@ -102,7 +102,7 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
     async capturePayment(
         input: CapturePaymentInput
     ): Promise<CapturePaymentOutput> {
-        console.log("capturando el pago", input);
+        console.log("capturando el pago", input);   
         const paymentId = input.data?.id
         if (!paymentId) {
             throw new MedusaError(
