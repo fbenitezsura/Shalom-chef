@@ -141,7 +141,7 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
     ): Promise<GetPaymentStatusOutput> {
         const paymentId = input.data?.id
         const mp = await this.client.getPayment(paymentId)
-
+        console.log("pago desde mp", mp);
         switch (mp.status) {
             case "approved":
                 return { status: "captured" }
