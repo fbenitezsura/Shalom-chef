@@ -15,16 +15,18 @@ const OrderDetails = ({ order, showStatus }: OrderDetailsProps) => {
 
   return (
     <div>
-      <Text>
-        Hemos enviado los detalles de confirmación del pedido a…{" "}
-        <span
-          className="text-ui-fg-medium-plus font-semibold"
-          data-testid="order-email"
-        >
-          {order.email}
-        </span>
-        .
-      </Text>
+      {order.status !== 'pending' && (
+        <Text>
+          Hemos enviado los detalles de confirmación del pedido a…{" "}
+          <span
+            className="text-ui-fg-medium-plus font-semibold"
+            data-testid="order-email"
+          >
+            {order.email}
+          </span>
+          .
+        </Text>
+      )}
       <Text className="mt-2">
         Fecha de orden:{" "}
         <span data-testid="order-date">
