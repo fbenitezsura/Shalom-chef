@@ -371,7 +371,7 @@ export async function placeOrder(type?: string) {
           description: `Orden #${cartRes.order.id}`,
         })
         revalidateTag("cart")
-        return { ok: true, redirectUrl: init_point }
+        return { ok: true, init_point }
       }
       revalidateTag("cart")
       return cartRes
