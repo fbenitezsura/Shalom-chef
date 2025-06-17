@@ -67,39 +67,6 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
         this.logger_ = container.logger;
     }
 
-    protected async createPreference(
-        amount: number,
-        description: string,
-        sessionId: string
-    ): Promise<{ id: string; init_point: string }> {
-        const body: PreferenceRequest = {
-            items: [
-                {
-                    id: "item_id",
-                    title: description,
-                    quantity: 1,
-                    unit_price: amount,
-                },
-            ],
-            back_urls: {
-                success: this.options_.successUrl,
-                failure: this.options_.failureUrl,
-                pending: this.options_.pendingUrl,
-            },
-            notification_url: this.options_.webhookUrl,
-            /* la referencia mínima que necesitamos */
-            external_reference: sessionId,
-            metadata: { session_id: sessionId },
-        }
-
-        const response = await this.preferenceClient.create({
-            body,
-            requestOptions: { idempotencyKey: randomUUID() },
-        })
-
-        return { id: response.id, init_point: response.init_point }
-    }
-
     static validateOptions(options: Record<any, any>) {
         if (!options.apiKey) {
             throw new MedusaError(
@@ -135,18 +102,27 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
     async capturePayment(
         input: CapturePaymentInput
     ): Promise<CapturePaymentOutput> {
-        console.log("capturando el webhook", input)
-        const externalId = input.data?.id
-
-        // assuming you have a client that captures the payment
-        const newData = await this.client.capturePayment(externalId)
+         console.log("informacion que llega en el capturePayment", input)
+        const paymentId = input.data?.id
+        if (!paymentId) {
+            throw new MedusaError(
+                MedusaError.Types.INVALID_DATA,
+                "paymentId missing in capturePayment"
+            )
+        }
+        const mpPayment = await this.client.getPayment(paymentId)
+        if (mpPayment.status !== "approved") {
+            return { data: { id: paymentId, mpStatus: mpPayment.status } }
+        }
         return {
             data: {
-                ...newData,
-                id: externalId,
+                id: paymentId,
+                external_reference: mpPayment.external_reference,
+                mpStatus: mpPayment.status
             }
         }
     }
+
 
     async cancelPayment(
         input: CancelPaymentInput
@@ -161,20 +137,19 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
     async getPaymentStatus(
         input: GetPaymentStatusInput
     ): Promise<GetPaymentStatusOutput> {
-        const externalId = input.data?.id
+        console.log("informacion que llega en el getPaymentStatus", input)
+        const paymentId = input.data?.id
+        const mp = await this.client.getPayment(paymentId)
 
-        // assuming you have a client that retrieves the payment status
-        const status = await this.client.getStatus(externalId)
-
-        switch (status) {
-            case "requires_capture":
-                return { status: "authorized" }
-            case "success":
+        switch (mp.status) {
+            case "approved":
                 return { status: "captured" }
-            case "canceled":
-                return { status: "canceled" }
-            default:
+            case "authorized":
+                return { status: "authorized" }
+            case "in_process":
                 return { status: "pending" }
+            default:
+                return { status: "canceled" }
         }
     }
 

@@ -15,6 +15,8 @@ export async function POST(
 ): Promise<void> {
     try {
 
+        console.log("asi llega el body", req.body)
+
         const {
             amount,
             description,
