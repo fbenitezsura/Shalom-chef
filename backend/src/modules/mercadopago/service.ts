@@ -167,6 +167,9 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
     async getWebhookActionAndData(
         payload: ProviderWebhookPayload["payload"]
     ): Promise<WebhookActionResult> {
+
+        console.log("payload que llega", payload);
+
         const {
             data,
             rawData,
