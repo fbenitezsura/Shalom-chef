@@ -102,27 +102,18 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
     async capturePayment(
         input: CapturePaymentInput
     ): Promise<CapturePaymentOutput> {
-         console.log("informacion que llega en el capturePayment", input)
-        const paymentId = input.data?.id
-        if (!paymentId) {
-            throw new MedusaError(
-                MedusaError.Types.INVALID_DATA,
-                "paymentId missing in capturePayment"
-            )
-        }
-        const mpPayment = await this.client.getPayment(paymentId)
-        if (mpPayment.status !== "approved") {
-            return { data: { id: paymentId, mpStatus: mpPayment.status } }
-        }
+        console.log("capturando el webhook", input)
+        const externalId = input.data?.id
+
+        // assuming you have a client that captures the payment
+        const newData = await this.client.capturePayment(externalId)
         return {
             data: {
-                id: paymentId,
-                external_reference: mpPayment.external_reference,
-                mpStatus: mpPayment.status
+                ...newData,
+                id: externalId,
             }
         }
     }
-
 
     async cancelPayment(
         input: CancelPaymentInput
@@ -137,19 +128,20 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
     async getPaymentStatus(
         input: GetPaymentStatusInput
     ): Promise<GetPaymentStatusOutput> {
-        console.log("informacion que llega en el getPaymentStatus", input)
-        const paymentId = input.data?.id
-        const mp = await this.client.getPayment(paymentId)
+        const externalId = input.data?.id
 
-        switch (mp.status) {
-            case "approved":
-                return { status: "captured" }
-            case "authorized":
+        // assuming you have a client that retrieves the payment status
+        const status = await this.client.getStatus(externalId)
+
+        switch (status) {
+            case "requires_capture":
                 return { status: "authorized" }
-            case "in_process":
-                return { status: "pending" }
-            default:
+            case "success":
+                return { status: "captured" }
+            case "canceled":
                 return { status: "canceled" }
+            default:
+                return { status: "pending" }
         }
     }
 
