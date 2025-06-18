@@ -169,7 +169,7 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
     ): Promise<WebhookActionResult> {
         console.log('payload que llega', payload);
 
-        const paymentId = payload.data.resource;
+        const paymentId = payload.data.resource || payload.data.data.id;
 
         if (!paymentId || typeof paymentId !== 'string') {
             throw new MedusaError(
@@ -177,6 +177,8 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
                 'Invalid payload: missing paymentId'
             );
         }
+
+        //paymentId -> 115497439700
 
         const paymentResp = await this.client.getPayment(paymentId);
         const mpPayment =
