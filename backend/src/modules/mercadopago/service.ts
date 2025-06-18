@@ -105,24 +105,19 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
         input: CapturePaymentInput
     ): Promise<CapturePaymentOutput> {
         console.log("capturando el pago", input);
-        const paymentId = input.data?.id
-        if (!paymentId) {
+        const preference_id = input.data?.preference_id;
+
+        if (!preference_id) {
             throw new MedusaError(
                 MedusaError.Types.INVALID_DATA,
-                "paymentId missing in capturePayment"
+                "preference_id missing in capturePayment"
             )
         }
 
-        const mpPayment = await this.client.getPayment(paymentId)
-
-        if (mpPayment.status !== "approved") {
-            return { data: { id: paymentId, mpStatus: mpPayment.status } }
-        }
         return {
             data: {
-                id: paymentId,
-                external_reference: mpPayment.external_reference,
-                mpStatus: mpPayment.status
+                id: preference_id,
+                mpStatus: 'captured'
             }
         }
     }
