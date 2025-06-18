@@ -197,7 +197,7 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
 
         console.log("baseData", baseData);
 
-        console.log("")
+        console.log("status usado", status):
 
         try {
             switch (status) {
@@ -205,15 +205,23 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
                     return { action: 'authorized', data: baseData };
 
                 case 'approved':   // Pago capturado / exitoso
-                    console.log("capturando el pago",status);
-                    fetch(`https://backend-production-d28a.up.railway.app/admin/payments/${metadata.session_id}/capture`);
+                    console.log("capturando el pago", status);
+                    try {
+                        await fetch(`https://backend-production-d28a.up.railway.app/admin/payments/${metadata.session_id}/capture`, {
+                            method: "GET",
+                            headers: { "Content-Type": "application/json" }
+                        });
+                    } catch (e) {
+                        console.log("e", e)
+                    }
+
                     return { action: 'captured', data: baseData };
 
                 default:           // Cualquier otro estado no soportado
                     return { action: 'not_supported', data: baseData };
             }
-        } catch(e) {
-            console.log("fallo",e)
+        } catch (e) {
+            console.log("fallo", e)
             return { action: 'failed', data: baseData };
         }
     }
