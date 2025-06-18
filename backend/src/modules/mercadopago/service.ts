@@ -178,11 +178,11 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
             );
         }
 
+
+        console.log("paymentId obtenido", paymentId);
         //paymentId -> 115497439700
 
-        const paymentResp = await this.client.getPayment(paymentId);
-        const mpPayment =
-            paymentResp && 'body' in paymentResp ? paymentResp.body : paymentResp;
+        const mpPayment = await this.client.getPayment(paymentId);
 
         console.log('mpPayment', mpPayment);
 
