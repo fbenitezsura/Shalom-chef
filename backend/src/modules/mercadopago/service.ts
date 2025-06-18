@@ -1,4 +1,4 @@
-import { MercadoPagoConfig, Preference } from 'mercadopago';
+import { MercadoPagoConfig, Preference, Payment } from 'mercadopago';
 import { randomUUID } from 'crypto';
 import { AbstractPaymentProvider } from "@medusajs/framework/utils"
 import {
@@ -53,6 +53,7 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
 
     protected client;
     protected preferenceClient: Preference;
+    protected payment;
     protected logger_: Logger;
     protected options_: Options;
 
@@ -64,6 +65,7 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
         this.options_ = options;
         this.client = new MercadoPagoConfig({ accessToken: options.apiKey });
         this.preferenceClient = new Preference(this.client);
+        this.payment = new Payment(this.client);
         this.logger_ = container.logger;
     }
 
@@ -182,7 +184,7 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
         console.log("paymentId obtenido", paymentId);
         //paymentId -> 115497439700
 
-        const mpPayment = await this.client.getPayment(paymentId);
+        const mpPayment = await this.payment.get({ id: paymentId });
 
         console.log('mpPayment', mpPayment);
 
