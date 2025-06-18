@@ -165,72 +165,55 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
     }
 
     async getWebhookActionAndData(
-        payload: any["payload"]
+        payload: Record<string, any>
     ): Promise<WebhookActionResult> {
+        console.log('payload que llega', payload);
 
-        console.log("payload que llega", payload);
+        const paymentId =
+            payload?.data?.id ??           // notificación v2
+            payload?.data?.data?.id ??     // notificación v1
+            payload?.payment?.id ?? null;  // fallback
 
-        const paymentId = payload?.data?.data?.id;
-
-        if (typeof paymentId !== 'string') {
-            throw new Error("Invalid payload: Missing payment ID");
-        }
-
-
-        if (!paymentId) {
+        if (!paymentId || typeof paymentId !== 'string') {
             throw new MedusaError(
                 MedusaError.Types.INVALID_DATA,
-                "paymentId missing in capturePayment"
-            )
+                'Invalid payload: missing paymentId'
+            );
         }
 
-        const mpPayment = await this.client.getPayment(paymentId);
+        const paymentResp = await this.client.getPayment(paymentId);
+        const mpPayment =
+            paymentResp && 'body' in paymentResp ? paymentResp.body : paymentResp;
 
-        console.log("pmPayment", mpPayment);
+        console.log('mpPayment', mpPayment);
+
+        const {
+            status,
+            transaction_amount,
+            metadata = {}
+        } = mpPayment ?? {};
+
+        const baseData = {
+            session_id: metadata.session_id ?? '',
+            amount: new BigNumber(transaction_amount ?? 0)
+        };
 
         try {
-            switch (mpPayment.event_type) {
-                case "authorized_amount":
-                    return {
-                        action: "authorized",
-                        data: {
-                            // assuming the session_id is stored in the metadata of the payment
-                            // in the third-party provider
-                            session_id: (data.metadata as Record<string, any>).session_id,
-                            amount: new BigNumber(data.amount as number)
-                        }
-                    }
-                case "success":
-                    return {
-                        action: "captured",
-                        data: {
-                            // assuming the session_id is stored in the metadata of the payment
-                            // in the third-party provider
-                            session_id: (data.metadata as Record<string, any>).session_id,
-                            amount: new BigNumber(data.amount as number)
-                        }
-                    }
-                default:
-                    return {
-                        action: "not_supported",
-                        data: {
-                            session_id: "",
-                            amount: new BigNumber(0)
-                        }
-                    }
+            switch (status) {
+                case 'authorized': // Pago autorizado, pendiente de captura
+                    return { action: 'authorized', data: baseData };
+
+                case 'approved':   // Pago capturado / exitoso
+                    return { action: 'captured', data: baseData };
+
+                default:           // Cualquier otro estado no soportado
+                    return { action: 'not_supported', data: baseData };
             }
-        } catch (e) {
-            return {
-                action: "failed",
-                data: {
-                    // assuming the session_id is stored in the metadata of the payment
-                    // in the third-party provider
-                    session_id: (data.metadata as Record<string, any>).session_id,
-                    amount: new BigNumber(data.amount as number)
-                }
-            }
+        } catch {
+            return { action: 'failed', data: baseData };
         }
     }
+
 
     async initiatePayment(
         input: InitiatePaymentInput
