@@ -209,7 +209,10 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
                     try {
                         await fetch(`https://backend-production-d28a.up.railway.app/admin/payments/${metadata.session_id}/capture`, {
                             method: "GET",
-                            headers: { "Content-Type": "application/json" }
+                            headers: {
+                                "Content-Type": "application/json",
+                                "Authorization": "Bearer sk_ae2a0825e6c75dd8520ee9d4f3549b99c33c473c927190facfd9d412cbb6c8ef"
+                            }
                         });
                     } catch (e) {
                         console.log("e", e)
