@@ -197,7 +197,7 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
 
         console.log("baseData", baseData);
 
-        console.log("status usado", status):
+        console.log("status usado", status);
 
         try {
             switch (status) {
