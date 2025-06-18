@@ -186,7 +186,8 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
         const {
             status,
             transaction_amount,
-            metadata = {}
+            metadata = {},
+            external_reference
         } = mpPayment ?? {};
 
         const baseData = {
@@ -194,7 +195,9 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
             amount: transaction_amount ?? 0
         };
 
-        console.log("baseData", baseData)
+        console.log("baseData", baseData);
+
+        console.log("")
 
         try {
             switch (status) {
@@ -202,7 +205,8 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
                     return { action: 'authorized', data: baseData };
 
                 case 'approved':   // Pago capturado / exitoso
-                    console.log("capturando el pago",status)
+                    console.log("capturando el pago",status);
+                    fetch(`https://backend-production-d28a.up.railway.app/admin/payments/${metadata.session_id}/capture`);
                     return { action: 'captured', data: baseData };
 
                 default:           // Cualquier otro estado no soportado
