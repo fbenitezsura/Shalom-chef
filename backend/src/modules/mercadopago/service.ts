@@ -211,7 +211,7 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
                             method: "GET",
                             headers: {
                                 "Content-Type": "application/json",
-                                "Authorization": "Bearer pk_3bc5abea485b87614a03a6d43d3430e3c72f047e034d8b63c118adbc818fd768"
+                                "Authorization": "Bearer sk_ae2a0825e6c75dd8520ee9d4f3549b99c33c473c927190facfd9d412cbb6c8ef"
                             }
                         });
                     } catch (e) {
