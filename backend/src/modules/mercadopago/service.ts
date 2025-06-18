@@ -199,18 +199,22 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
             amount: new BigNumber(transaction_amount ?? 0)
         };
 
+        console.log("baseData", baseData)
+
         try {
             switch (status) {
                 case 'authorized': // Pago autorizado, pendiente de captura
                     return { action: 'authorized', data: baseData };
 
                 case 'approved':   // Pago capturado / exitoso
+                    console.log("capturando el pago",status)
                     return { action: 'captured', data: baseData };
 
                 default:           // Cualquier otro estado no soportado
                     return { action: 'not_supported', data: baseData };
             }
-        } catch {
+        } catch(e) {
+            console.log("fallo",e)
             return { action: 'failed', data: baseData };
         }
     }
