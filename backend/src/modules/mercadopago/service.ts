@@ -102,7 +102,7 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
     async capturePayment(
         input: CapturePaymentInput
     ): Promise<CapturePaymentOutput> {
-        console.log("capturando el pago", input);   
+        console.log("capturando el pago", input);
         const paymentId = input.data?.id
         if (!paymentId) {
             throw new MedusaError(
@@ -165,14 +165,19 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
     }
 
     async getWebhookActionAndData(
-        payload: ProviderWebhookPayload["payload"]
+        payload: any["payload"]
     ): Promise<WebhookActionResult> {
 
         console.log("payload que llega", payload);
 
-        const paymentId = payload.data.data.id;
+        const paymentId = payload?.data?.data?.id;
 
-         if (!paymentId) {
+        if (typeof paymentId !== 'string') {
+            throw new Error("Invalid payload: Missing payment ID");
+        }
+
+
+        if (!paymentId) {
             throw new MedusaError(
                 MedusaError.Types.INVALID_DATA,
                 "paymentId missing in capturePayment"
@@ -184,7 +189,7 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
         console.log("pmPayment", mpPayment);
 
         try {
-            switch (mpPayment.status) {
+            switch (mpPayment.event_type) {
                 case "authorized_amount":
                     return {
                         action: "authorized",
