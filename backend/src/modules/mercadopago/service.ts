@@ -191,7 +191,7 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
 
         const baseData = {
             session_id: metadata.session_id ?? '',
-            amount: new BigNumber(transaction_amount ?? 0)
+            amount: transaction_amount ?? 0
         };
 
         console.log("baseData", baseData)
