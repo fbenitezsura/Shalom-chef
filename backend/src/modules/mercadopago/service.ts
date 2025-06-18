@@ -169,10 +169,7 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
     ): Promise<WebhookActionResult> {
         console.log('payload que llega', payload);
 
-        const paymentId =
-            payload?.data?.id ??           // notificación v2
-            payload?.data?.data?.id ??     // notificación v1
-            payload?.payment?.id ?? null;  // fallback
+        const paymentId = payload.data.resource;
 
         if (!paymentId || typeof paymentId !== 'string') {
             throw new MedusaError(
