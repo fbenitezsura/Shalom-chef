@@ -170,14 +170,21 @@ class MercadopagoService extends AbstractPaymentProvider<Options> {
 
         console.log("payload que llega", payload);
 
-        const {
-            data,
-            rawData,
-            headers
-        } = payload
+        const paymentId = payload.data.data.id;
+
+         if (!paymentId) {
+            throw new MedusaError(
+                MedusaError.Types.INVALID_DATA,
+                "paymentId missing in capturePayment"
+            )
+        }
+
+        const mpPayment = await this.client.getPayment(paymentId);
+
+        console.log("pmPayment", mpPayment);
 
         try {
-            switch (data.event_type) {
+            switch (mpPayment.status) {
                 case "authorized_amount":
                     return {
                         action: "authorized",
