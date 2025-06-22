@@ -50,7 +50,7 @@ export async function POST(
             )
 
             const paymentCollection = await paymentModuleService.retrievePaymentCollection(
-                mpPayment.metadata.session_id,           // ← id de la colección
+                mpPayment.metadata.session_id,
                 { relations: ["payments"] },
             )
 
@@ -69,7 +69,7 @@ export async function POST(
 
             const { token } = await login.json();
 
-            await fetch(`https://backend-production-d28a.up.railway.app/admin/payments/${paymentIdMedusa}/capture`, {
+            const result = await fetch(`https://backend-production-d28a.up.railway.app/admin/payments/${paymentIdMedusa}/capture`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -77,14 +77,9 @@ export async function POST(
                 }
             });
 
-            const payment = await paymentModuleService.updatePayment({
-                id: paymentIdMedusa,
-                status: "captured"
-            })
+            const paymentCapture = result.json();
 
-            console.log("payment", payment);
-
-            res.status(200).json({ payment });
+            res.status(200).json({ paymentCapture });
         } else {
             res
                 .status(500)
