@@ -1,8 +1,7 @@
 import { MedusaError } from "@medusajs/framework/utils";
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework"
 import { MercadoPagoConfig, Payment } from 'mercadopago';
-import { Modules } from "@medusajs/framework/utils"
-import type { IPaymentModuleService } from "@medusajs/payment"
+import { Modules } from "@medusajs/framework/utils";
 
 export async function POST(
     req: MedusaRequest,
@@ -10,7 +9,7 @@ export async function POST(
 ): Promise<void> {
     try {
         console.log("req body", req.body);
-        const payload = req.body;
+        const payload: any = req.body;
 
         console.log('payload que llega', payload);
 
@@ -48,7 +47,7 @@ export async function POST(
         if (mpPayment.status === 'approved') {
             const paymentModuleService = req.scope.resolve(
                 Modules.PAYMENT,
-            ) as IPaymentModuleService
+            )
 
             const paymentCollection = await paymentModuleService.retrievePaymentCollection(
                 mpPayment.metadata.session_id,           // ← id de la colección
