@@ -77,6 +77,8 @@ export async function POST(
                 }
             });
 
+            console.log("capturado", result);
+
             const paymentCapture = result.json();
 
             res.status(200).json({ paymentCapture });
