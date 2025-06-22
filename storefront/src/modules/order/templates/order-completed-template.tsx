@@ -34,7 +34,7 @@ export default function OrderCompletedTemplate({
             level="h1"
             className="flex flex-col gap-y-3 text-ui-fg-base text-3xl mb-4"
           >
-            {order.payment_status === 'pending' ? (
+            {order.payment_status === 'authorized' ? (
               <div className="flex flex-col items-center gap-3">
                 {/* Loader circular simple */}
                 <span className="text-lg font-medium">Pago pendiente</span>

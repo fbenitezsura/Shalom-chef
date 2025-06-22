@@ -15,7 +15,7 @@ const OrderDetails = ({ order, showStatus }: OrderDetailsProps) => {
 
   return (
     <div>
-      {order.payment_status !== 'pending' && (
+      {order.payment_status !== 'authorized' && (
         <Text>
           Hemos enviado los detalles de confirmación del pedido a…{" "}
           <span
